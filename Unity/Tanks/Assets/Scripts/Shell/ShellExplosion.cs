@@ -10,14 +10,14 @@ public class ShellExplosion : MonoBehaviour
     public float m_ExplosionForce = 1000f;            
     public float m_MaxLifeTime = 2f;              
     public float m_ExplosionRadius = 5f;
-    public bool BigBullet;
-    public Rigidbody m_Bullet_CarePkg;
+    public bool m_IsBigBullet;
+    public Rigidbody m_BulletCarePackage;
 
 
     private void Start()
     {
         Destroy(gameObject, m_MaxLifeTime);
-        if (BigBullet)
+        if (m_IsBigBullet)
         {
             m_MaxDamage = 150f;
             m_ExplosionRadius = 10f;
@@ -30,7 +30,7 @@ public class ShellExplosion : MonoBehaviour
         // Find all the tanks in an area around the shell and damage them.
         Collider[] colliders = Physics.OverlapSphere(transform.position, m_ExplosionRadius);
         bool canPickUp = true;
-        if (BigBullet)
+        if (m_IsBigBullet)
         {
             canPickUp = false;
         }
@@ -64,7 +64,7 @@ public class ShellExplosion : MonoBehaviour
         if (canPickUp)
         {
             Care_Pkg_Transform.transform.Translate(0, 1f, 0);
-            CarePackage.SpawnCarePkg(ref m_Bullet_CarePkg, Care_Pkg_Transform, CarePackage.Type.Bullet);
+            CarePackage.SpawnCarePackage(ref m_BulletCarePackage, Care_Pkg_Transform, CarePackage.Type.Bullet);
         }
     }
 

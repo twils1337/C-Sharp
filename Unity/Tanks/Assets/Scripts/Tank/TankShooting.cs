@@ -23,11 +23,11 @@ public class TankShooting : MonoBehaviour
     private bool m_Fired;
 
     //extension
-    public int ammoCapacity = 5;
-    public int currentAmmo;
-    public bool ThreeBurstShotActive = false;
-    public bool ConeShotActive = false;
-    public bool BigBulletActive = false;
+    public int m_AmmoCapacity = 5;
+    public int m_CurrentAmmo;
+    public bool m_ThreeBurstShotActive = false;
+    public bool m_ConeShotActive = false;
+    public bool m_BigBulletActive = false;
     public Rigidbody m_BigShell;  
 
 
@@ -44,7 +44,7 @@ public class TankShooting : MonoBehaviour
 
         m_ChargeSpeed = (m_MaxLaunchForce - m_MinLaunchForce) / m_MaxChargeTime;
 
-        currentAmmo = ammoCapacity;
+        m_CurrentAmmo = m_AmmoCapacity;
 
     }
 
@@ -52,28 +52,28 @@ public class TankShooting : MonoBehaviour
     {
         // Track the current state of the fire button and make decisions based on the current launch force.
         m_AimSlider.value = m_MinLaunchForce;
-        if (currentAmmo >= 1)
+        if (m_CurrentAmmo >= 1)
         {
             if (m_CurrentLaunchForce >= m_MaxLaunchForce && !m_Fired)
             {
                 //max charged, not yet fired
                 m_CurrentLaunchForce = m_MaxLaunchForce;
-                if (ThreeBurstShotActive)
+                if (m_ThreeBurstShotActive)
                 {
                     StartCoroutine(FireThree());
-                    ThreeBurstShotActive = false;
+                    m_ThreeBurstShotActive = false;
                 }
-                else if (ConeShotActive)
+                else if (m_ConeShotActive)
                 {
                     StartCoroutine(ConeShot());
-                    ConeShotActive = false;
+                    m_ConeShotActive = false;
                 }
                 else
                 {
                     Fire();
-                    if (BigBulletActive)
+                    if (m_BigBulletActive)
                     {
-                        BigBulletActive = false;
+                        m_BigBulletActive = false;
                     }
                 }
             }
@@ -94,22 +94,22 @@ public class TankShooting : MonoBehaviour
             else if (Input.GetButtonUp(m_FireButton) && !m_Fired)
             {
                 //released fire button, shell will be fired
-                if (ThreeBurstShotActive)
+                if (m_ThreeBurstShotActive)
                 {
                     StartCoroutine(FireThree());
-                    ThreeBurstShotActive = false;
+                    m_ThreeBurstShotActive = false;
                 }
-                else if (ConeShotActive)
+                else if (m_ConeShotActive)
                 {
                     StartCoroutine(ConeShot());
-                    ConeShotActive = false;
+                    m_ConeShotActive = false;
                 }
                 else
                 {
                     Fire();
-                    if (BigBulletActive)
+                    if (m_BigBulletActive)
                     {
-                        BigBulletActive = false;
+                        m_BigBulletActive = false;
                     }
                 }
             }
@@ -119,11 +119,12 @@ public class TankShooting : MonoBehaviour
     private void Fire()
     {
         // Instantiate and launch the shell.
+        AutoCorrectFireTransform();
         m_Fired = true;
-        --currentAmmo;
-        Rigidbody shellInstance = BigBulletActive ? Instantiate(m_BigShell, m_FireTransform.position, m_FireTransform.rotation) as Rigidbody:
+        --m_CurrentAmmo;
+        Rigidbody shellInstance = m_BigBulletActive ? Instantiate(m_BigShell, m_FireTransform.position, m_FireTransform.rotation) as Rigidbody:
                                               Instantiate(m_Shell, m_FireTransform.position, m_FireTransform.rotation) as Rigidbody;
-        shellInstance.GetComponent<ShellExplosion>().BigBullet = BigBulletActive;
+        shellInstance.GetComponent<ShellExplosion>().m_IsBigBullet = m_BigBulletActive;
         shellInstance.velocity = m_CurrentLaunchForce * m_FireTransform.forward;
         m_ShootingAudio.clip = m_FireClip;
         m_ShootingAudio.Play();
@@ -142,9 +143,9 @@ public class TankShooting : MonoBehaviour
 
     private void FireBurst(bool last)
     {
-        // Instantiate and launch the shell.
+        AutoCorrectFireTransform();
         m_Fired = true;
-        --currentAmmo;
+        --m_CurrentAmmo;
         Rigidbody shellInstance = Instantiate(m_Shell, m_FireTransform.position, m_FireTransform.rotation) as Rigidbody;
         shellInstance.velocity = m_CurrentLaunchForce * m_FireTransform.forward;
         m_ShootingAudio.clip = m_FireClip;
@@ -161,14 +162,15 @@ public class TankShooting : MonoBehaviour
         FireTwo();
         yield return new WaitForSeconds(.1f);
         Fire();
-        ConeShotActive = false;
+        m_ConeShotActive = false;
     }
 
     //Gives the Cone spread of the shot
     private void FireTwo()
     {
+        AutoCorrectFireTransform();
         m_Fired = true;
-        currentAmmo -= 2;
+        m_CurrentAmmo -= 2;
         m_FireTransform.Rotate(0, 5.0f, 0);
         m_FireTransform.Translate(1.0f, 0, 0);
         Rigidbody shellInstance1 = Instantiate(m_Shell, m_FireTransform.position, m_FireTransform.rotation) as Rigidbody;
@@ -184,5 +186,11 @@ public class TankShooting : MonoBehaviour
         m_CurrentLaunchForce = m_MinLaunchForce;
         m_FireTransform.Rotate(0, 5.0f, 0);
         m_FireTransform.Translate(1.0f, 0, 0);
+    }
+
+    private void AutoCorrectFireTransform()
+    {
+      m_FireTransform.localPosition = new Vector3(0f, 1.7f, 1.35f);
+      m_FireTransform.localEulerAngles = new Vector3(0f, 0f, 0f);
     }
 }

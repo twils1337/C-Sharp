@@ -59,10 +59,10 @@ public class TankManager
     {
         m_Instance.transform.position = m_SpawnPoint.position;
         m_Instance.transform.rotation = m_SpawnPoint.rotation;
-        m_Shooting.currentAmmo = m_Shooting.ammoCapacity;
-        m_Shooting.ThreeBurstShotActive = false;
-        m_Shooting.ConeShotActive = false;
-        m_Shooting.BigBulletActive = false;
+        m_Shooting.m_CurrentAmmo = m_Shooting.m_AmmoCapacity;
+        m_Shooting.m_ThreeBurstShotActive = false;
+        m_Shooting.m_ConeShotActive = false;
+        m_Shooting.m_BigBulletActive = false;
         m_Instance.SetActive(false);
         m_Instance.SetActive(true);
     }

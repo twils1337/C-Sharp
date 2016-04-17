@@ -21,9 +21,9 @@ public class GameManager : MonoBehaviour
     private TankManager m_RoundWinner;
     private TankManager m_GameWinner;
 
-    public GameObject CarePkgSpawnPts;
-    public Text Player1_Info;
-    public Text Player2_Info;
+    public CarePackageManager m_CarePackageManager;
+    public Text m_Player1_Info;
+    public Text m_Player2_Info;
 
 
     private void Start()
@@ -83,7 +83,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator RoundStarting()
     {
         ResetAllTanks();
-        CarePkgSpawnPts.GetComponent<SpawnPtManager>().reset();
+        m_CarePackageManager.Reset();
         DisableTankControl();
         m_CameraControl.SetStartPositionAndSize();
         m_RoundNumber++;
@@ -100,8 +100,8 @@ public class GameManager : MonoBehaviour
         {
             string Shooting_Disp_Player1 = getAmmoDisplay(1);
             string Shooting_Disp_Player2 = getAmmoDisplay(2);
-            Player1_Info.text = Shooting_Disp_Player1;
-            Player2_Info.text = Shooting_Disp_Player2;  
+            m_Player1_Info.text = Shooting_Disp_Player1;
+            m_Player2_Info.text = Shooting_Disp_Player2;  
             yield return null;
         }
     }
@@ -110,18 +110,18 @@ public class GameManager : MonoBehaviour
     {
         TankManager player = m_Tanks[Player_i-1];
         TankShooting playerShootComp = player.m_Instance.GetComponent<TankShooting>();
-        StringBuilder Player_Info = new StringBuilder("<color=#" + ColorUtility.ToHtmlStringRGB(player.m_PlayerColor) + ">Ammo: " + playerShootComp.currentAmmo + "</color>");
+        StringBuilder Player_Info = new StringBuilder("<color=#" + ColorUtility.ToHtmlStringRGB(player.m_PlayerColor) + ">Ammo: " + playerShootComp.m_CurrentAmmo + "</color>");
         Player_Info.Append("\n");
         Player_Info.Append("<color=#" + ColorUtility.ToHtmlStringRGB(player.m_PlayerColor) +">Special: ");
-        if (playerShootComp.ThreeBurstShotActive)
+        if (playerShootComp.m_ThreeBurstShotActive)
         {
             Player_Info.Append("Three Burst Shot</color>");
         }
-        else if (playerShootComp.ConeShotActive)
+        else if (playerShootComp.m_ConeShotActive)
         {
             Player_Info.Append("Cone Shot</color>");
         }
-        else if (playerShootComp.BigBulletActive)
+        else if (playerShootComp.m_BigBulletActive)
         {
             Player_Info.Append("Big Bullet</color>");
         }
