@@ -117,8 +117,7 @@ public class CarePackage : MonoBehaviour
                 }
                 break;
             case Type.Speed:
-                movementComponent.BuffTimer = 0.0f;
-                movementComponent.SpeedBoosted = true;
+                movementComponent.m_HasSpeedBuff = true;
                 break;
             default:
                 break;

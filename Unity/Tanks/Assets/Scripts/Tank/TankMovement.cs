@@ -19,17 +19,19 @@ public class TankMovement : MonoBehaviour
     private float m_OriginalPitch;
 
     //extension
-    public bool SpeedBoosted = false;
-    private float BoostFactor = 2.5f;
-    public float BuffTimer = 0.0f;
-    private float BuffPeriod = 1.5f;    
+    public bool m_HasSpeedBuff = false;
+    private float m_BoostFactor = 2.5f;
+    public float m_BuffTimer = 0.0f;
+    private float m_BuffPeriod = 1.5f;
+    private string m_TurboButton;
+    private bool m_TurboPressed;
+    private bool m_ActiveTurbo;
 
 
     private void Awake()
     {
         m_Rigidbody = GetComponent<Rigidbody>();
     }
-
 
     private void OnEnable ()
     {
@@ -51,6 +53,8 @@ public class TankMovement : MonoBehaviour
         m_TurnAxisName = "Horizontal" + m_PlayerNumber;
 
         m_OriginalPitch = m_MovementAudio.pitch;
+
+        m_TurboButton = "Turbo" + m_PlayerNumber;
     }
 
 
@@ -59,6 +63,7 @@ public class TankMovement : MonoBehaviour
         // Store the player's input and make sure the audio for the engine is playing.
         m_MovementInputValue = Input.GetAxis(m_MovementAxisName);
         m_TurnInputValue = Input.GetAxis(m_TurnAxisName);
+        m_TurboPressed = Input.GetButtonDown(m_TurboButton);
         EngineAudio();
     }
 
@@ -90,7 +95,7 @@ public class TankMovement : MonoBehaviour
     private void FixedUpdate()
     {
         // Move and turn the tank.
-        BuffTimer += Time.deltaTime;
+        m_BuffTimer += Time.deltaTime;
         Move();
         Turn();
     }
@@ -100,15 +105,25 @@ public class TankMovement : MonoBehaviour
     {
         // Adjust the position of the tank based on the player's input.
         Vector3 movement;
-        if (BuffTimer <= BuffPeriod && SpeedBoosted)
+        if (m_TurboPressed)
         {
-            movement = transform.forward * m_MovementInputValue * m_Speed * Time.deltaTime * BoostFactor;
+            if (m_HasSpeedBuff) //if speed buff not active, and activate speed buff
+            {
+                m_ActiveTurbo = true;
+                m_HasSpeedBuff = false;
+                m_BuffTimer = 0.0f;
+            }
+        }
+        if (m_ActiveTurbo && m_BuffTimer <= m_BuffPeriod)
+        {
+            movement = transform.forward * m_MovementInputValue * m_Speed * Time.deltaTime * m_BoostFactor;
         }
         else
         {
-            if (SpeedBoosted)
+            //Debug.Log("O");
+            if (m_ActiveTurbo && m_BuffTimer > m_BuffPeriod)
             {
-                SpeedBoosted = false;
+               m_ActiveTurbo = false;
             }
             movement = transform.forward* m_MovementInputValue *m_Speed * Time.deltaTime;
         }
