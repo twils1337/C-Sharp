@@ -24,6 +24,8 @@ public class GameManager : MonoBehaviour
     public CarePackageManager m_CarePackageManager;
     public Text m_Player1_Info;
     public Text m_Player2_Info;
+    public Image m_Player1_SpeedBuff;
+    public Image m_Player2_SpeedBuff;
 
 
     private void Start()
@@ -98,30 +100,68 @@ public class GameManager : MonoBehaviour
         m_MessageText.text = string.Empty;
         while (!OneTankLeft())
         {
-            string Shooting_Disp_Player1 = getAmmoDisplay(1);
-            string Shooting_Disp_Player2 = getAmmoDisplay(2);
-            m_Player1_Info.text = Shooting_Disp_Player1;
-            m_Player2_Info.text = Shooting_Disp_Player2;  
+            DisplayUI();
+            DisplayAmmo();
             yield return null;
         }
+    }
+
+    private void DisplayUI()
+    {
+        DisplaySpeedBuff();
+        DisplayAmmo();
+    }
+
+    private void DisplaySpeedBuff()
+    {
+        Color player1Color = m_Player1_SpeedBuff.color;
+        Color player2Color = m_Player2_SpeedBuff.color;
+        if (m_Tanks[0].m_Instance.GetComponent<TankMovement>().m_HasSpeedBuff)
+        {
+            player1Color[3] = 255f;
+            m_Player1_SpeedBuff.color = player1Color;
+        }
+        else
+        {
+            player1Color[3] = 0f;
+            m_Player1_SpeedBuff.color = player1Color;
+        }
+        if (m_Tanks[1].m_Instance.GetComponent<TankMovement>().m_HasSpeedBuff)
+        {
+            player2Color[3] = 255f;
+            m_Player2_SpeedBuff.color = player2Color;
+        }
+        else
+        {
+            player2Color[3] = 0f;
+            m_Player2_SpeedBuff.color = player2Color;
+        }
+    }
+
+    private void DisplayAmmo()
+    {
+        string Shooting_Disp_Player1 = getAmmoDisplay(1);
+        string Shooting_Disp_Player2 = getAmmoDisplay(2);
+        m_Player1_Info.text = Shooting_Disp_Player1;
+        m_Player2_Info.text = Shooting_Disp_Player2;
     }
 
     private string getAmmoDisplay(int Player_i)
     {
         TankManager player = m_Tanks[Player_i-1];
-        TankShooting playerShootComp = player.m_Instance.GetComponent<TankShooting>();
-        StringBuilder Player_Info = new StringBuilder("<color=#" + ColorUtility.ToHtmlStringRGB(player.m_PlayerColor) + ">Ammo: " + playerShootComp.m_CurrentAmmo + "</color>");
+        TankShooting playerShootComponent = player.m_Instance.GetComponent<TankShooting>();
+        StringBuilder Player_Info = new StringBuilder("<color=#" + ColorUtility.ToHtmlStringRGB(player.m_PlayerColor) + ">Ammo: " + playerShootComponent.m_CurrentAmmo + "</color>");
         Player_Info.Append("\n");
         Player_Info.Append("<color=#" + ColorUtility.ToHtmlStringRGB(player.m_PlayerColor) +">Special: ");
-        if (playerShootComp.m_ThreeBurstShotActive)
+        if (playerShootComponent.m_ThreeBurstShotActive)
         {
             Player_Info.Append("Three Burst Shot</color>");
         }
-        else if (playerShootComp.m_ConeShotActive)
+        else if (playerShootComponent.m_ConeShotActive)
         {
             Player_Info.Append("Cone Shot</color>");
         }
-        else if (playerShootComp.m_BigBulletActive)
+        else if (playerShootComponent.m_BigBulletActive)
         {
             Player_Info.Append("Big Bullet</color>");
         }
