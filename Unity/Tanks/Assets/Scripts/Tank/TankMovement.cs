@@ -24,8 +24,9 @@ public class TankMovement : MonoBehaviour
     public float m_BuffTimer = 0.0f;
     private float m_BuffPeriod = 1.5f;
     private string m_TurboButton;
-    private bool m_TurboPressed;
-    private bool m_ActiveTurbo;
+    private bool m_TurboPressed = false;
+    private bool m_ActiveTurbo = false;
+    public bool m_HasCollided = false;
 
 
     private void Awake()
@@ -67,6 +68,10 @@ public class TankMovement : MonoBehaviour
         EngineAudio();
     }
 
+    private void LateUpdate()
+    {
+        m_HasCollided = false;
+    }
 
     private void EngineAudio()
     {
@@ -120,7 +125,6 @@ public class TankMovement : MonoBehaviour
         }
         else
         {
-            //Debug.Log("O");
             if (m_ActiveTurbo && m_BuffTimer > m_BuffPeriod)
             {
                m_ActiveTurbo = false;

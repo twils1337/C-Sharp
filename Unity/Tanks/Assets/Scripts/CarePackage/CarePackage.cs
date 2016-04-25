@@ -8,9 +8,7 @@ public class CarePackage : MonoBehaviour
         Bullet, ThreeBurst, Health, Speed, ConeShot, BigBullet
     }
     public Type m_Type { get; set; }
-
     private float HealthBenefit = 25.0f;
-    private int Hits = 1;
     
     public static Rigidbody SpawnCarePackage(ref Rigidbody CarePkgPrefab,Transform transform, Type CPtype)
     {
@@ -21,23 +19,27 @@ public class CarePackage : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        foreach (ContactPoint contact in collision)
+        for (int i = 0; i < collision.contacts.Length; i++)
         {
-            if (contact.otherCollider.tag == "Tank" && Hits < 2)
+            ContactPoint contact = collision.contacts[i];
+            if (collision.contacts[i].otherCollider.tag == "Tank")
             {
-                ++Hits;
-                if (m_Type == Type.Health || m_Type == Type.Speed)
+                TankMovement movementComponent = collision.contacts[i].otherCollider.GetComponent<TankMovement>();
+                if (!movementComponent.m_HasCollided)
                 {
-                    ProcessBuffPackage(contact, m_Type);
+                    movementComponent.m_HasCollided = true;
+                    if (m_Type == Type.Health || m_Type == Type.Speed)
+                    {
+                        ProcessBuffPackage(collision.contacts[i], m_Type);
+                    }
+                    else
+                    {
+                        ProcessBulletPackage(contact, m_Type);
+                    }
+                    RemoveCarePackage();
                 }
-                else
-                {
-                    ProcessBulletPackage(contact, m_Type);
-                }
-                RemoveCarePackage();
             }
         }
-
     }
 
     private void RemoveCarePackage()
@@ -53,50 +55,42 @@ public class CarePackage : MonoBehaviour
     void ProcessBulletPackage(ContactPoint contact, Type bulletType)
     {
         TankShooting shootingComponent = contact.otherCollider.GetComponent<TankShooting>();
-        int reload = 0;
         if (bulletType != Type.Bullet && bulletType != Type.BigBullet)
         {
-            reload = 3;
-            if (OverCapacity(shootingComponent.m_CurrentAmmo, reload, shootingComponent.m_AmmoCapacity))
-            {
-                shootingComponent.m_CurrentAmmo = shootingComponent.m_AmmoCapacity;
-            }
-            else
-            {
-                shootingComponent.m_CurrentAmmo += reload;
-            }
-            if (bulletType == Type.ThreeBurst)
-            {
-                if (!shootingComponent.m_ConeShotActive && !shootingComponent.m_BigBulletActive)
-                {
-                    shootingComponent.m_ThreeBurstShotActive = true;
-                }
-            }
-            else
-            {
-                    if (!shootingComponent.m_ThreeBurstShotActive && !shootingComponent.m_BigBulletActive)
-                    {
-                        shootingComponent.m_ConeShotActive = true;
-                    }
-            }
+            ReloadAndUpdateBullets(ref shootingComponent, bulletType, reload: 3);
         }
         else
         {
-            reload = 1;
-            if ( !OverCapacity(shootingComponent.m_CurrentAmmo, reload, shootingComponent.m_AmmoCapacity))
-            {
-                shootingComponent.m_CurrentAmmo += reload;
-            }
-            if (bulletType == Type.BigBullet)
-            {
-                if (!shootingComponent.m_ThreeBurstShotActive && !shootingComponent.m_ConeShotActive)
-                {
-                    shootingComponent.m_BigBulletActive = true;
-                }
-            }
+            ReloadAndUpdateBullets(ref shootingComponent, bulletType, reload: 1);
         }
     }
 
+    private void ReloadAndUpdateBullets(ref TankShooting shootingComponent, Type bulletType, int reload)
+    {
+        if (OverCapacity(shootingComponent.m_CurrentAmmo, reload, shootingComponent.m_AmmoCapacity))
+        {
+            shootingComponent.m_CurrentAmmo = shootingComponent.m_AmmoCapacity;
+        }
+        else
+        {
+            shootingComponent.m_CurrentAmmo += reload;
+        }
+        RemoveBulletBuffs(ref shootingComponent);
+        switch (bulletType)
+        {
+            case Type.ThreeBurst:
+                shootingComponent.m_ThreeBurstShotActive = true;
+                break;
+            case Type.ConeShot:
+                shootingComponent.m_ConeShotActive = true;
+                break;
+            case Type.BigBullet:
+                shootingComponent.m_BigBulletActive = true;
+                break;
+            default:
+                break;
+        }
+    }
     private void ProcessBuffPackage(ContactPoint contact, Type buffType)
     {
         TankHealth healthComponent = contact.otherCollider.GetComponent<TankHealth>();
@@ -127,5 +121,10 @@ public class CarePackage : MonoBehaviour
     private bool OverCapacity(int currentAmmo, int reloadAmmo, int ammoCapacity)
     {
         return currentAmmo + reloadAmmo > ammoCapacity;
+    }
+
+    private void RemoveBulletBuffs(ref TankShooting tank)
+    {
+        tank.RemoveAllBulletBuffs();
     }
 }

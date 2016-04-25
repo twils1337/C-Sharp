@@ -193,4 +193,11 @@ public class TankShooting : MonoBehaviour
       m_FireTransform.localPosition = new Vector3(0f, 1.7f, 1.35f);
       m_FireTransform.localEulerAngles = new Vector3(0f, 0f, 0f);
     }
+
+    public void RemoveAllBulletBuffs()
+    {
+        m_ThreeBurstShotActive = false;
+        m_BigBulletActive = false;
+        m_ConeShotActive = false;
+    }
 }

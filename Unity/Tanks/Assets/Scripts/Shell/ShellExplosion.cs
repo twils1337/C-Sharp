@@ -36,14 +36,19 @@ public class ShellExplosion : MonoBehaviour
         }
         for (int i = 0; i < colliders.Length; i++)
         {
+            if (colliders[i].name == "Shell(Clone)")
+            {
+                continue;
+            }
             if (!colliders[i].GetComponent<Rigidbody>())
             {
-                if (colliders[i].tag != "CarePackageSafe")
-                {
+                if (colliders[i].tag != "CarePackageSafe" && colliders[i].tag != "Structure")
+                { 
                     canPickUp = false;
                 }
                 continue;
             }
+
             Rigidbody targetRigidBody = colliders[i].GetComponent<Rigidbody>();
             targetRigidBody.AddExplosionForce(m_ExplosionForce,transform.position,m_ExplosionRadius);
             TankHealth targetHealth = targetRigidBody.GetComponent<TankHealth>();
@@ -58,13 +63,13 @@ public class ShellExplosion : MonoBehaviour
         m_ExplosionParticles.transform.parent = null;
         m_ExplosionParticles.Play();
         m_ExplosionAudio.Play();
-        Transform Care_Pkg_Transform = gameObject.transform;
+        Transform CarePackageTransform = gameObject.transform;
         Destroy(m_ExplosionParticles.gameObject, m_ExplosionParticles.duration);
         Destroy(gameObject);
         if (canPickUp)
         {
-            Care_Pkg_Transform.transform.Translate(0, 1f, 0);
-            CarePackage.SpawnCarePackage(ref m_BulletCarePackage, Care_Pkg_Transform, CarePackage.Type.Bullet);
+            CarePackageTransform.transform.Translate(0, 1f, 0);
+            CarePackage.SpawnCarePackage(ref m_BulletCarePackage, CarePackageTransform, CarePackage.Type.Bullet);
         }
     }
 
