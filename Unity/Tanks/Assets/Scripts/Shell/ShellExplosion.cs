@@ -69,7 +69,7 @@ public class ShellExplosion : MonoBehaviour
         if (canPickUp)
         {
             CarePackageTransform.transform.Translate(0, 1f, 0);
-            CarePackage.SpawnCarePackage(ref m_BulletCarePackage, CarePackageTransform, CarePackage.Type.Bullet);
+            CarePackage.SpawnCarePackage(ref m_BulletCarePackage, CarePackageTransform, CarePackage.Type.Bullet, false);
         }
     }
 

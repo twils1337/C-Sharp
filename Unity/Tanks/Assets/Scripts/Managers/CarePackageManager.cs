@@ -7,35 +7,30 @@ public class CarePackageManager : MonoBehaviour
     public int m_ActiveCarePackages { get; set; }
     public List<Rigidbody> m_CarePackages;
     public List<GameObject> m_SpawnPoints;
-    private int MaxCarePackagesActive = 7;
-    private float SpawnTimer = 0.0f;
-    private bool FirstSpawn = true;      //will spawn the max amount of care packages initially, then spawn more as needed
-    private float TimeToGoOff = 30.0f;
-    // Use this for initialization
-    void Start ()
-    {
-        m_ActiveCarePackages = MaxCarePackagesActive;
-    }
+    private int m_MaxCarePackagesActive = 7;
+    private float m_SpawnTimer = 0.0f;
+    private bool m_FirstSpawn = true;      //will spawn the max amount of care packages initially, then spawn more as needed
+    private float m_TimeToGoOff = 30.0f;
 	
 	// Update is called once per frame
 	void Update ()
     {
-        SpawnTimer += Time.deltaTime;
-        if (FirstSpawn)
+        m_SpawnTimer += Time.deltaTime;
+        if (m_FirstSpawn)
         {
-            FirstSpawn = false;
-            for (int i = 0; i < MaxCarePackagesActive; ++i)
+            m_FirstSpawn = false;
+            for (int i = 0; i < m_MaxCarePackagesActive; ++i)
             {
                 SpawnCarePackage();
             }
-            m_ActiveCarePackages = MaxCarePackagesActive;
+            m_ActiveCarePackages = m_MaxCarePackagesActive;
         }
-        else if (m_ActiveCarePackages < MaxCarePackagesActive &&
-                SpawnTimer >= TimeToGoOff)
+        else if (m_ActiveCarePackages < m_MaxCarePackagesActive &&
+                m_SpawnTimer >= m_TimeToGoOff)
         {
             SpawnCarePackage();
             ++m_ActiveCarePackages;
-            SpawnTimer = 0.0f;
+            m_SpawnTimer = 0.0f;
         }
     }
 
@@ -46,7 +41,7 @@ public class CarePackageManager : MonoBehaviour
         Transform spawnTransform = m_SpawnPoints[randomSpawn].transform;
         Rigidbody carePkg = m_CarePackages[randomCarePackage];
         CarePackage.Type CPType = GetCarePackageTypeByID(randomCarePackage);
-        CarePackage.SpawnCarePackage(ref carePkg, spawnTransform, CPType);
+        CarePackage.SpawnCarePackage(ref carePkg, spawnTransform, CPType, true);
     }
 
     private CarePackage.Type GetCarePackageTypeByID(int carePackageID)
@@ -78,6 +73,6 @@ public class CarePackageManager : MonoBehaviour
         {
             Destroy(AllCarePackages[i]);
         }
-        FirstSpawn = true;
+        m_FirstSpawn = true;
     }
 }

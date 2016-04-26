@@ -78,7 +78,6 @@
     <Compile Include="Assets\Scripts\Tank\TankHealth.cs" />
     <Compile Include="Assets\Scripts\Tank\TankMovement.cs" />
     <Compile Include="Assets\Scripts\Tank\TankShooting.cs" />
-    <Compile Include="Assets\Scripts\TestingShells.cs" />
     <Compile Include="Assets\Scripts\UI\UIDirectionControl.cs" />
   </ItemGroup>
   <ItemGroup>

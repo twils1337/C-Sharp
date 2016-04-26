@@ -9,11 +9,13 @@ public class CarePackage : MonoBehaviour
     }
     public Type m_Type { get; set; }
     private float HealthBenefit = 25.0f;
+    public bool m_WasSpawned = false;
     
-    public static Rigidbody SpawnCarePackage(ref Rigidbody CarePkgPrefab,Transform transform, Type CPtype)
+    public static Rigidbody SpawnCarePackage(ref Rigidbody CarePkgPrefab,Transform transform, Type CPtype, bool fromManager)
     {
         Rigidbody newCarePkg = Instantiate(CarePkgPrefab, transform.position, transform.rotation) as Rigidbody;
         newCarePkg.GetComponent<CarePackage>().m_Type = CPtype;
+        newCarePkg.GetComponent<CarePackage>().m_WasSpawned = fromManager;
         return newCarePkg;
     }
 
@@ -44,12 +46,15 @@ public class CarePackage : MonoBehaviour
 
     private void RemoveCarePackage()
     {
-        GameObject carePackageManager;
-        if ( carePackageManager = GameObject.Find("Care Package Spawn Points") )
+        if (m_WasSpawned)
         {
-            --carePackageManager.GetComponent<CarePackageManager>().m_ActiveCarePackages;
-            Destroy(gameObject);
+            GameObject carePackageManager = GameObject.Find("Care Package Spawn Points");
+            if (carePackageManager)
+            {
+                --carePackageManager.GetComponent<CarePackageManager>().m_ActiveCarePackages;
+            }
         }
+        Destroy(gameObject);
     }
 
     void ProcessBulletPackage(ContactPoint contact, Type bulletType)
