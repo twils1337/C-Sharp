@@ -122,12 +122,7 @@ public class TankShooting : MonoBehaviour
         AutoCorrectFireTransform();
         m_Fired = true;
         --m_CurrentAmmo;
-        Rigidbody shellInstance = m_BigBulletActive ? Instantiate(m_BigShell, m_FireTransform.position, m_FireTransform.rotation) as Rigidbody:
-                                              Instantiate(m_Shell, m_FireTransform.position, m_FireTransform.rotation) as Rigidbody;
-        shellInstance.GetComponent<ShellExplosion>().m_IsBigBullet = m_BigBulletActive;
-        shellInstance.velocity = m_CurrentLaunchForce * m_FireTransform.forward;
-        m_ShootingAudio.clip = m_FireClip;
-        m_ShootingAudio.Play();
+        CreateShellAndFire();
         m_CurrentLaunchForce = m_MinLaunchForce;
     }
 
@@ -171,21 +166,28 @@ public class TankShooting : MonoBehaviour
         AutoCorrectFireTransform();
         m_Fired = true;
         m_CurrentAmmo -= 2;
-        m_FireTransform.Rotate(0, 5.0f, 0);
-        m_FireTransform.Translate(1.0f, 0, 0);
-        Rigidbody shellInstance1 = Instantiate(m_Shell, m_FireTransform.position, m_FireTransform.rotation) as Rigidbody;
-        shellInstance1.velocity = m_CurrentLaunchForce * m_FireTransform.forward;
-        m_ShootingAudio.clip = m_FireClip;
-        m_ShootingAudio.Play();
-        m_FireTransform.Rotate(0, -10.0f, 0);
-        m_FireTransform.Translate(-2.0f, 0, 0);
-        Rigidbody shellInstance2 = Instantiate(m_Shell, m_FireTransform.position, m_FireTransform.rotation) as Rigidbody;
-        shellInstance2.velocity = m_CurrentLaunchForce * m_FireTransform.forward;
-        m_ShootingAudio.clip = m_FireClip;
-        m_ShootingAudio.Play();
+        CreateShellAndFire(5.0f, 1.0f);
+        CreateShellAndFire(-10.0f, -2.0f);
         m_CurrentLaunchForce = m_MinLaunchForce;
-        m_FireTransform.Rotate(0, 5.0f, 0);
-        m_FireTransform.Translate(1.0f, 0, 0);
+        FireTransformRotateYandTranslateX(5.0f, 1.0f);
+    }
+
+    private void CreateShellAndFire(float rotY = 0.0f, float transX = 0.0f)
+    {
+        FireTransformRotateYandTranslateX(rotY, transX);
+        Rigidbody shellInstance = m_BigBulletActive ? Instantiate(m_BigShell, m_FireTransform.position, m_FireTransform.rotation) as Rigidbody :
+                                                      Instantiate(m_Shell, m_FireTransform.position, m_FireTransform.rotation) as Rigidbody;
+        shellInstance.GetComponent<ShellExplosion>().m_IsBigBullet = m_BigBulletActive;
+        shellInstance.velocity = m_CurrentLaunchForce * m_FireTransform.forward;
+        shellInstance.GetComponent<ShellExplosion>().m_ShootingPlayer = m_PlayerNumber;
+        m_ShootingAudio.clip = m_FireClip;
+        m_ShootingAudio.Play();
+    }
+
+    private void FireTransformRotateYandTranslateX(float RotY = 0.0f, float TransX = 0.0f)
+    {
+        m_FireTransform.Rotate(0, RotY, 0);
+        m_FireTransform.Translate(TransX, 0, 0);
     }
 
     private void AutoCorrectFireTransform()
@@ -200,4 +202,5 @@ public class TankShooting : MonoBehaviour
         m_BigBulletActive = false;
         m_ConeShotActive = false;
     }
+
 }

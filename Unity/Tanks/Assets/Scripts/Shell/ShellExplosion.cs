@@ -12,6 +12,7 @@ public class ShellExplosion : MonoBehaviour
     public float m_ExplosionRadius = 5f;
     public bool m_IsBigBullet;
     public Rigidbody m_BulletCarePackage;
+    public int m_ShootingPlayer = 1;
 
 
     private void Start()
@@ -36,7 +37,7 @@ public class ShellExplosion : MonoBehaviour
         }
         for (int i = 0; i < colliders.Length; i++)
         {
-            if (colliders[i].name == "Shell(Clone)")
+            if (colliders[i].tag == "Shell")
             {
                 continue;
             }
@@ -56,9 +57,12 @@ public class ShellExplosion : MonoBehaviour
             {
                 continue;
             }
-            float damage = CalculateDamage(targetRigidBody.position);
-            targetHealth.TakeDamage(damage);
-            canPickUp = false;
+            if (m_ShootingPlayer != colliders[i].GetComponent<TankMovement>().m_PlayerNumber)
+            {
+                float damage = CalculateDamage(targetRigidBody.position);
+                targetHealth.TakeDamage(damage);
+                canPickUp = false;
+            }
         }
         m_ExplosionParticles.transform.parent = null;
         m_ExplosionParticles.Play();
