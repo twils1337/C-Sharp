@@ -3,20 +3,26 @@ using System.Collections;
 
 public class CarePackage : MonoBehaviour
 {
-    public enum Type
+    public enum PackageType
     {
         Bullet, ThreeBurst, Health, Speed, ConeShot, BigBullet
     }
-    public Type m_Type { get; set; }
-    private float HealthBenefit = 25.0f;
+    public PackageType m_Type { get; set; }
+    private float m_HealthBenefit = 25.0f;
     public bool m_WasSpawned = false;
+    public bool m_IsSleeping = false;
     
-    public static Rigidbody SpawnCarePackage(ref Rigidbody CarePkgPrefab,Transform transform, Type CPtype, bool fromManager)
+    public static Rigidbody SpawnCarePackage(ref Rigidbody CarePkgPrefab,Transform transform, PackageType CPtype, bool fromManager)
     {
         Rigidbody newCarePkg = Instantiate(CarePkgPrefab, transform.position, transform.rotation) as Rigidbody;
         newCarePkg.GetComponent<CarePackage>().m_Type = CPtype;
         newCarePkg.GetComponent<CarePackage>().m_WasSpawned = fromManager;
         return newCarePkg;
+    }
+
+    private void Update()
+    {
+        m_IsSleeping = GetComponent<Rigidbody>().IsSleeping();
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -30,7 +36,7 @@ public class CarePackage : MonoBehaviour
                 if (!movementComponent.m_HasCollided)
                 {
                     movementComponent.m_HasCollided = true;
-                    if (m_Type == Type.Health || m_Type == Type.Speed)
+                    if (m_Type == PackageType.Health || m_Type == PackageType.Speed)
                     {
                         ProcessBuffPackage(collision.contacts[i], m_Type);
                     }
@@ -57,10 +63,10 @@ public class CarePackage : MonoBehaviour
         Destroy(gameObject);
     }
 
-    void ProcessBulletPackage(ContactPoint contact, Type bulletType)
+    void ProcessBulletPackage(ContactPoint contact, PackageType bulletType)
     {
         TankShooting shootingComponent = contact.otherCollider.GetComponent<TankShooting>();
-        if (bulletType != Type.Bullet && bulletType != Type.BigBullet)
+        if (bulletType != PackageType.Bullet && bulletType != PackageType.BigBullet)
         {
             ReloadAndUpdateBullets(ref shootingComponent, bulletType, reload: 3);
         }
@@ -70,7 +76,7 @@ public class CarePackage : MonoBehaviour
         }
     }
 
-    private void ReloadAndUpdateBullets(ref TankShooting shootingComponent, Type bulletType, int reload)
+    private void ReloadAndUpdateBullets(ref TankShooting shootingComponent, PackageType bulletType, int reload)
     {
         if (OverCapacity(shootingComponent.m_CurrentAmmo, reload, shootingComponent.m_AmmoCapacity))
         {
@@ -80,42 +86,45 @@ public class CarePackage : MonoBehaviour
         {
             shootingComponent.m_CurrentAmmo += reload;
         }
-        RemoveBulletBuffs(ref shootingComponent);
+        if (bulletType != PackageType.Bullet)
+        {
+            RemoveBulletBuffs(ref shootingComponent);
+        }
         switch (bulletType)
         {
-            case Type.ThreeBurst:
+            case PackageType.ThreeBurst:
                 shootingComponent.m_ThreeBurstShotActive = true;
                 break;
-            case Type.ConeShot:
+            case PackageType.ConeShot:
                 shootingComponent.m_ConeShotActive = true;
                 break;
-            case Type.BigBullet:
+            case PackageType.BigBullet:
                 shootingComponent.m_BigBulletActive = true;
                 break;
             default:
                 break;
         }
     }
-    private void ProcessBuffPackage(ContactPoint contact, Type buffType)
+    private void ProcessBuffPackage(ContactPoint contact, PackageType buffType)
     {
         TankHealth healthComponent = contact.otherCollider.GetComponent<TankHealth>();
         TankMovement movementComponent = contact.otherCollider.GetComponent<TankMovement>();
         switch (buffType)
         {
-            case Type.Health:
+            case PackageType.Health:
                 float healthMax = 100.0f;
-                if ((healthComponent.m_CurrentHealth + HealthBenefit) > healthMax)
+                if ((healthComponent.m_CurrentHealth + m_HealthBenefit) > healthMax)
                 {
                     healthComponent.m_CurrentHealth = healthMax;
                     healthComponent.SetHealthUI();
                 }
                 else
                 {
-                    healthComponent.m_CurrentHealth += HealthBenefit;
+                    healthComponent.m_CurrentHealth += m_HealthBenefit;
                     healthComponent.SetHealthUI();
                 }
                 break;
-            case Type.Speed:
+            case PackageType.Speed:
                 movementComponent.m_HasSpeedBuff = true;
                 break;
             default:
