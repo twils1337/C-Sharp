@@ -10,9 +10,14 @@ public class ShellExplosion : MonoBehaviour
     public float m_ExplosionForce = 1000f;            
     public float m_MaxLifeTime = 2f;              
     public float m_ExplosionRadius = 5f;
-    public bool m_IsBigBullet;
+
+    //extension
+    public bool m_IsBigBullet= false;
     public Rigidbody m_BulletCarePackage;
     public int m_ShootingPlayer = 1;
+    public bool m_IsAlienSignal = false;
+    public bool m_DidSignalHitTank;
+    public GameObject m_SwarmPrefab;
 
 
     private void Start()
@@ -31,25 +36,20 @@ public class ShellExplosion : MonoBehaviour
         // Find all the tanks in an area around the shell and damage them.
         Collider[] colliders = Physics.OverlapSphere(transform.position, m_ExplosionRadius);
         bool canPickUp = true;
-        if (m_IsBigBullet)
+        if (m_IsBigBullet || m_IsAlienSignal)
         {
             canPickUp = false;
         }
         for (int i = 0; i < colliders.Length; i++)
         {
-            if (colliders[i].tag == "Shell")
-            {
-                continue;
-            }
             if (!colliders[i].GetComponent<Rigidbody>())
             {
-                if (!(colliders[i].tag != "CarePackageSafe" || colliders[i].tag != "Structure"))
-                { 
+                if ( colliders[i].tag != "CarePackageSafe" && colliders[i].tag != "Structure" && colliders[i].tag != "Shell" )
+                {
                     canPickUp = false;
                 }
                 continue;
             }
-
             Rigidbody targetRigidBody = colliders[i].GetComponent<Rigidbody>();
             targetRigidBody.AddExplosionForce(m_ExplosionForce,transform.position,m_ExplosionRadius);
             TankHealth targetHealth = targetRigidBody.GetComponent<TankHealth>();
@@ -59,22 +59,30 @@ public class ShellExplosion : MonoBehaviour
             }
             if (m_ShootingPlayer != colliders[i].GetComponent<TankMovement>().m_PlayerNumber)
             {
-                float damage = CalculateDamage(targetRigidBody.position);
-                targetHealth.TakeDamage(damage);
-                canPickUp = false;
+                if (m_IsAlienSignal)
+                {
+                    AlienSwarm.SpawnSwarm(ref m_SwarmPrefab, colliders[i].transform, colliders[i].GetComponent<TankMovement>().m_PlayerNumber, true);
+                    m_IsAlienSignal = false;
+                }
+                else
+                {
+                    float damage = CalculateDamage(targetRigidBody.position);
+                    targetHealth.TakeDamage(damage);
+                    canPickUp = false;
+                }
             }
         }
-        m_ExplosionParticles.transform.parent = null;
-        m_ExplosionParticles.Play();
-        m_ExplosionAudio.Play();
-        Transform CarePackageTransform = gameObject.transform;
-        Destroy(m_ExplosionParticles.gameObject, m_ExplosionParticles.duration);
-        Destroy(gameObject);
+        ProcessExplosionParticlesAndDestroy(playExplosion: !m_IsAlienSignal);
+        if (m_IsAlienSignal)
+        {
+            int targetID = m_ShootingPlayer == 1 ? 2 : 1;
+            AlienSwarm.SpawnSwarm(ref m_SwarmPrefab, gameObject.transform, targetID, false);
+        }
         if (canPickUp)
         {
-            CarePackageTransform.transform.Translate(0, 1f, 0);
-            CarePackage.SpawnCarePackage(ref m_BulletCarePackage, CarePackageTransform, CarePackage.PackageType.Bullet, false);
+            SpawnBulletPackage();
         }
+        Destroy(gameObject);
     }
 
 
@@ -87,5 +95,23 @@ public class ShellExplosion : MonoBehaviour
         float damage = relativeDistance * m_MaxDamage;
         damage = Mathf.Max(0f, damage);
         return damage;
+    }
+
+    private void ProcessExplosionParticlesAndDestroy(bool playExplosion)
+    {
+        m_ExplosionParticles.transform.parent = null;
+        if (playExplosion)
+        {
+            m_ExplosionParticles.Play();
+            m_ExplosionAudio.Play();
+        }
+        Destroy(m_ExplosionParticles.gameObject, m_ExplosionParticles.duration);
+    }
+
+    private void SpawnBulletPackage()
+    {
+        Transform CarePackageTransform = gameObject.transform;
+        CarePackageTransform.transform.Translate(0, 1f, 0);
+        CarePackage.SpawnCarePackage(ref m_BulletCarePackage, CarePackageTransform, CarePackage.PackageType.Bullet, false);
     }
 }

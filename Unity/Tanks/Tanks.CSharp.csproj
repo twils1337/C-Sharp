@@ -69,6 +69,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\AlienSwarm.cs" />
     <Compile Include="Assets\Scripts\Camera\CameraControl.cs" />
     <Compile Include="Assets\Scripts\CarePackage\CarePackage.cs" />
     <Compile Include="Assets\Scripts\Managers\CarePackageManager.cs" />
@@ -78,6 +79,8 @@
     <Compile Include="Assets\Scripts\Tank\TankHealth.cs" />
     <Compile Include="Assets\Scripts\Tank\TankMovement.cs" />
     <Compile Include="Assets\Scripts\Tank\TankShooting.cs" />
+    <Compile Include="Assets\Scripts\UFO\LightningBolt.cs" />
+    <Compile Include="Assets\Scripts\UFO\Rotate_Disc.cs" />
     <Compile Include="Assets\Scripts\UI\UIDirectionControl.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Text;
+using System;
 
 public class GameManager : MonoBehaviour
 {
@@ -86,6 +87,7 @@ public class GameManager : MonoBehaviour
     {
         ResetAllTanks();
         m_CarePackageManager.Reset();
+        DestroyAllSwarms();
         DisableTankControl();
         m_CameraControl.SetStartPositionAndSize();
         m_RoundNumber++;
@@ -93,6 +95,14 @@ public class GameManager : MonoBehaviour
         yield return m_StartWait;
     }
 
+    private void DestroyAllSwarms()
+    {
+        GameObject[] swarms = GameObject.FindGameObjectsWithTag("Aliens");
+        for (int i = 0; i < swarms.Length; i++)
+        {
+            Destroy(swarms[i].gameObject);
+        }
+    }
 
     private IEnumerator RoundPlaying()
     {
@@ -153,15 +163,15 @@ public class GameManager : MonoBehaviour
         StringBuilder Player_Info = new StringBuilder("<color=#" + ColorUtility.ToHtmlStringRGB(player.m_PlayerColor) + ">Ammo: " + playerShootComponent.m_CurrentAmmo + "</color>");
         Player_Info.Append("\n");
         Player_Info.Append("<color=#" + ColorUtility.ToHtmlStringRGB(player.m_PlayerColor) +">Special: ");
-        if (playerShootComponent.m_ThreeBurstShotActive)
+        if (playerShootComponent.m_HasThreeBurst)
         {
             Player_Info.Append("Three Burst Shot</color>");
         }
-        else if (playerShootComponent.m_ConeShotActive)
+        else if (playerShootComponent.m_HasConeShot)
         {
             Player_Info.Append("Cone Shot</color>");
         }
-        else if (playerShootComponent.m_BigBulletActive)
+        else if (playerShootComponent.m_HasBigBullet)
         {
             Player_Info.Append("Big Bullet</color>");
         }

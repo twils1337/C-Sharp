@@ -1,0 +1,153 @@
+fileFormatVersion: 2
+guid: 4eed088171fdab94b8021e9f56bfa9de
+timeCreated: 1462357551
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: Alien
+    100002: //RootNode
+    100004: AlienHead
+    100006: Antennae_Ball_Left
+    100008: Antennae_Ball_Right
+    100010: Antennae_Left
+    100012: Antennae_Right
+    100014: Antennae_Trunk_Left
+    100016: Antennae_Trunk_Right
+    100018: Bot_Ship
+    100020: Ship_Floor
+    100022: UFO
+    100024: UFO_Caarriage
+    100026: UFO_Disc
+    100028: UFO_Light
+    100030: UFO_Light1
+    100032: UFO_Light2
+    100034: UFO_Light3
+    100036: UFO_Light4
+    100038: UFO_Lights
+    400000: Alien
+    400002: //RootNode
+    400004: AlienHead
+    400006: Antennae_Ball_Left
+    400008: Antennae_Ball_Right
+    400010: Antennae_Left
+    400012: Antennae_Right
+    400014: Antennae_Trunk_Left
+    400016: Antennae_Trunk_Right
+    400018: Bot_Ship
+    400020: Ship_Floor
+    400022: UFO
+    400024: UFO_Caarriage
+    400026: UFO_Disc
+    400028: UFO_Light
+    400030: UFO_Light1
+    400032: UFO_Light2
+    400034: UFO_Light3
+    400036: UFO_Light4
+    400038: UFO_Lights
+    2300000: AlienHead
+    2300002: Antennae_Ball_Left
+    2300004: Antennae_Ball_Right
+    2300006: Antennae_Trunk_Left
+    2300008: Antennae_Trunk_Right
+    2300010: Bot_Ship
+    2300012: Ship_Floor
+    2300014: UFO_Caarriage
+    2300016: UFO_Disc
+    2300018: UFO_Light
+    2300020: UFO_Light1
+    2300022: UFO_Light2
+    2300024: UFO_Light3
+    2300026: UFO_Light4
+    3300000: AlienHead
+    3300002: Antennae_Ball_Left
+    3300004: Antennae_Ball_Right
+    3300006: Antennae_Trunk_Left
+    3300008: Antennae_Trunk_Right
+    3300010: Bot_Ship
+    3300012: Ship_Floor
+    3300014: UFO_Caarriage
+    3300016: UFO_Disc
+    3300018: UFO_Light
+    3300020: UFO_Light1
+    3300022: UFO_Light2
+    3300024: UFO_Light3
+    3300026: UFO_Light4
+    4300000: Antennae_Ball_Right
+    4300002: Antennae_Trunk_Right
+    4300004: Antennae_Trunk_Left
+    4300006: Antennae_Ball_Left
+    4300008: AlienHead
+    4300010: UFO_Caarriage
+    4300012: UFO_Disc
+    4300014: UFO_Light
+    4300016: UFO_Light1
+    4300018: UFO_Light2
+    4300020: UFO_Light3
+    4300022: UFO_Light4
+    4300024: Bot_Ship
+    4300026: Ship_Floor
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleRotations: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

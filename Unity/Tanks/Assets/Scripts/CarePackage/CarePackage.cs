@@ -93,13 +93,13 @@ public class CarePackage : MonoBehaviour
         switch (bulletType)
         {
             case PackageType.ThreeBurst:
-                shootingComponent.m_ThreeBurstShotActive = true;
+                shootingComponent.m_HasThreeBurst = true;
                 break;
             case PackageType.ConeShot:
-                shootingComponent.m_ConeShotActive = true;
+                shootingComponent.m_HasConeShot = true;
                 break;
             case PackageType.BigBullet:
-                shootingComponent.m_BigBulletActive = true;
+                shootingComponent.m_HasBigBullet = true;
                 break;
             default:
                 break;
@@ -113,7 +113,7 @@ public class CarePackage : MonoBehaviour
         {
             case PackageType.Health:
                 float healthMax = 100.0f;
-                if ((healthComponent.m_CurrentHealth + m_HealthBenefit) > healthMax)
+                if ( (healthComponent.m_CurrentHealth + m_HealthBenefit) > healthMax )
                 {
                     healthComponent.m_CurrentHealth = healthMax;
                     healthComponent.SetHealthUI();

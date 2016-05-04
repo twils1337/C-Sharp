@@ -21,13 +21,14 @@ public class TankMovement : MonoBehaviour
     //extension
     public bool m_HasSpeedBuff = false;
     private float m_BoostFactor = 2.5f;
-    public float m_BuffTimer = 0.0f;
+    public float m_Timer = 0.0f;
     private float m_BuffPeriod = 1.5f;
     private string m_TurboButton;
     private bool m_TurboPressed = false;
     private bool m_ActiveTurbo = false;
-    public bool m_HasCollided = false;
-
+    public bool m_HasCollided = false;    //used to ensure double collision detections are not accounted for when picking up a care package
+    public bool m_AliensSlowingSpeed = false;
+    private float m_SlowFactor = .5f;
 
     private void Awake()
     {
@@ -100,7 +101,7 @@ public class TankMovement : MonoBehaviour
     private void FixedUpdate()
     {
         // Move and turn the tank.
-        m_BuffTimer += Time.deltaTime;
+        m_Timer += Time.deltaTime;
         Move();
         Turn();
     }
@@ -112,20 +113,24 @@ public class TankMovement : MonoBehaviour
         Vector3 movement;
         if (m_TurboPressed)
         {
-            if (m_HasSpeedBuff) //if speed buff not active, and activate speed buff
+            if (m_HasSpeedBuff) //if speed buff not active, activate speed buff
             {
                 m_ActiveTurbo = true;
                 m_HasSpeedBuff = false;
-                m_BuffTimer = 0.0f;
+                m_Timer = 0.0f;
             }
         }
-        if (m_ActiveTurbo && m_BuffTimer <= m_BuffPeriod)
+        if (m_ActiveTurbo && m_Timer <= m_BuffPeriod)    //speed boost active
         {
             movement = transform.forward * m_MovementInputValue * m_Speed * Time.deltaTime * m_BoostFactor;
         }
-        else
+        else if (m_AliensSlowingSpeed)
         {
-            if (m_ActiveTurbo && m_BuffTimer > m_BuffPeriod)
+            movement = transform.forward * m_MovementInputValue * m_Speed * Time.deltaTime * m_SlowFactor;
+        }
+        else   //normal movement
+        {
+            if (m_ActiveTurbo && m_Timer > m_BuffPeriod)
             {
                m_ActiveTurbo = false;
             }
@@ -142,5 +147,4 @@ public class TankMovement : MonoBehaviour
         Quaternion turnRotation = Quaternion.Euler(0f, turn, 0f);
         m_Rigidbody.MoveRotation(m_Rigidbody.rotation * turnRotation);
     }
-
 }

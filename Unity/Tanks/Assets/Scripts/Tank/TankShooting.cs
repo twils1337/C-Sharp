@@ -25,9 +25,10 @@ public class TankShooting : MonoBehaviour
     //extension
     public int m_AmmoCapacity = 5;
     public int m_CurrentAmmo;
-    public bool m_ThreeBurstShotActive = false;
-    public bool m_ConeShotActive = false;
-    public bool m_BigBulletActive = false;
+    public bool m_HasThreeBurst = false;
+    public bool m_HasConeShot = false;
+    public bool m_HasBigBullet = false;
+    public bool m_HasAlienSignal = false;
     public Rigidbody m_BigShell;  
 
 
@@ -58,22 +59,22 @@ public class TankShooting : MonoBehaviour
             {
                 //max charged, not yet fired
                 m_CurrentLaunchForce = m_MaxLaunchForce;
-                if (m_ThreeBurstShotActive)
+                if (m_HasThreeBurst)
                 {
                     StartCoroutine(FireThree());
-                    m_ThreeBurstShotActive = false;
+                    m_HasThreeBurst = false;
                 }
-                else if (m_ConeShotActive)
+                else if (m_HasConeShot)
                 {
                     StartCoroutine(ConeShot());
-                    m_ConeShotActive = false;
+                    m_HasConeShot = false;
                 }
                 else
                 {
                     Fire();
-                    if (m_BigBulletActive)
+                    if (m_HasBigBullet)
                     {
-                        m_BigBulletActive = false;
+                        m_HasBigBullet = false;
                     }
                 }
             }
@@ -94,22 +95,27 @@ public class TankShooting : MonoBehaviour
             else if (Input.GetButtonUp(m_FireButton) && !m_Fired)
             {
                 //released fire button, shell will be fired
-                if (m_ThreeBurstShotActive)
+                if (m_HasThreeBurst)
                 {
                     StartCoroutine(FireThree());
-                    m_ThreeBurstShotActive = false;
+                    m_HasThreeBurst = false;
                 }
-                else if (m_ConeShotActive)
+                else if (m_HasConeShot)
                 {
                     StartCoroutine(ConeShot());
-                    m_ConeShotActive = false;
+                    m_HasConeShot = false;
+                }
+                else if (m_HasAlienSignal)
+                {
+                    Fire();
+                    m_HasAlienSignal = false;
                 }
                 else
                 {
                     Fire();
-                    if (m_BigBulletActive)
+                    if (m_HasBigBullet)
                     {
-                        m_BigBulletActive = false;
+                        m_HasBigBullet = false;
                     }
                 }
             }
@@ -157,7 +163,7 @@ public class TankShooting : MonoBehaviour
         FireTwo();
         yield return new WaitForSeconds(.1f);
         Fire();
-        m_ConeShotActive = false;
+        m_HasConeShot = false;
     }
 
     //Gives the Cone spread of the shot
@@ -172,35 +178,41 @@ public class TankShooting : MonoBehaviour
         FireTransformRotateYandTranslateX(5.0f, 1.0f);
     }
 
-    private void CreateShellAndFire(float rotY = 0.0f, float transX = 0.0f)
+    private void CreateShellAndFire(float rotationY = 0.0f, float positionX = 0.0f)
     {
-        FireTransformRotateYandTranslateX(rotY, transX);
-        Rigidbody shellInstance = m_BigBulletActive ? Instantiate(m_BigShell, m_FireTransform.position, m_FireTransform.rotation) as Rigidbody :
+        FireTransformRotateYandTranslateX(rotationY, positionX);
+        Rigidbody shellInstance = m_HasBigBullet ? Instantiate(m_BigShell, m_FireTransform.position, m_FireTransform.rotation) as Rigidbody :
                                                       Instantiate(m_Shell, m_FireTransform.position, m_FireTransform.rotation) as Rigidbody;
-        shellInstance.GetComponent<ShellExplosion>().m_IsBigBullet = m_BigBulletActive;
+        ShellExplosion explosion = shellInstance.GetComponent<ShellExplosion>();
+        explosion.m_IsBigBullet = m_HasBigBullet;
         shellInstance.velocity = m_CurrentLaunchForce * m_FireTransform.forward;
-        shellInstance.GetComponent<ShellExplosion>().m_ShootingPlayer = m_PlayerNumber;
+        explosion.m_ShootingPlayer = m_PlayerNumber;
+        if (m_HasAlienSignal)
+        {
+            explosion.m_IsAlienSignal = true;
+            m_HasAlienSignal = false;
+        }
         m_ShootingAudio.clip = m_FireClip;
         m_ShootingAudio.Play();
     }
 
-    private void FireTransformRotateYandTranslateX(float RotY = 0.0f, float TransX = 0.0f)
+    private void FireTransformRotateYandTranslateX(float rotationY = 0.0f, float positionX = 0.0f)
     {
-        m_FireTransform.Rotate(0, RotY, 0);
-        m_FireTransform.Translate(TransX, 0, 0);
+        m_FireTransform.Rotate(0, rotationY, 0);
+        m_FireTransform.Translate(positionX, 0, 0);
     }
 
     private void AutoCorrectFireTransform()
     {
-      m_FireTransform.localPosition = new Vector3(0f, 1.7f, 1.35f);
-      m_FireTransform.localEulerAngles = new Vector3(0f, 0f, 0f);
+      m_FireTransform.localPosition = new Vector3(0f, 1.7f, 1.35f); //x,y,z in this new Vector3 are the original values of the fire transform set on initialization
+      m_FireTransform.localEulerAngles = new Vector3(0f, 0f, 0f); 
     }
 
     public void RemoveAllBulletBuffs()
     {
-        m_ThreeBurstShotActive = false;
-        m_BigBulletActive = false;
-        m_ConeShotActive = false;
+        m_HasThreeBurst = false;
+        m_HasBigBullet = false;
+        m_HasConeShot = false;
     }
 
 }
