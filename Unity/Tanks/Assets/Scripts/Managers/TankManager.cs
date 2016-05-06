@@ -4,15 +4,19 @@ using UnityEngine;
 [Serializable]
 public class TankManager
 {
-    public Color m_PlayerColor;            
-    public Transform m_SpawnPoint;         
-    [HideInInspector] public int m_PlayerNumber;             
-    [HideInInspector] public string m_ColoredPlayerText;
-    [HideInInspector] public GameObject m_Instance;          
-    [HideInInspector] public int m_Wins;                     
+    public Color m_PlayerColor;
+    public Transform m_SpawnPoint;
+    [HideInInspector]
+    public int m_PlayerNumber;
+    [HideInInspector]
+    public string m_ColoredPlayerText;
+    [HideInInspector]
+    public GameObject m_Instance;
+    [HideInInspector]
+    public int m_Wins;
 
 
-    private TankMovement m_Movement;       
+    private TankMovement m_Movement;
     private TankShooting m_Shooting;
     private GameObject m_CanvasGameObject;
 
@@ -63,7 +67,14 @@ public class TankManager
         m_Shooting.m_HasThreeBurst = false;
         m_Shooting.m_HasConeShot = false;
         m_Shooting.m_HasBigBullet = false;
+        RemoveAllBuffs();
         m_Instance.SetActive(false);
         m_Instance.SetActive(true);
+    }
+
+    private void RemoveAllBuffs()
+    {
+        m_Instance.GetComponent<TankShooting>().RemoveAllBulletBuffs();
+        m_Instance.GetComponent<TankMovement>().m_HasSpeedBuff = false;
     }
 }

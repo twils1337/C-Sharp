@@ -1,42 +1,47 @@
 fileFormatVersion: 2
 guid: a1fd87a558d087a499a0062e553bc932
-timeCreated: 1461752322
+timeCreated: 1462539710
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
-    100000: BigBulletCarePkg
-    100002: BulletCarePkg
-    100004: //RootNode
-    100006: ConeShotCarePkg
-    100008: HealthCarePkg
-    100010: SpeedBoostCarePkg
-    100012: TriBurstPkg
-    400000: BigBulletCarePkg
-    400002: BulletCarePkg
-    400004: //RootNode
-    400006: ConeShotCarePkg
-    400008: HealthCarePkg
-    400010: SpeedBoostCarePkg
-    400012: TriBurstPkg
-    2300000: BigBulletCarePkg
-    2300002: BulletCarePkg
-    2300004: ConeShotCarePkg
-    2300006: HealthCarePkg
-    2300008: SpeedBoostCarePkg
-    2300010: TriBurstPkg
-    3300000: BigBulletCarePkg
-    3300002: BulletCarePkg
-    3300004: ConeShotCarePkg
-    3300006: HealthCarePkg
-    3300008: SpeedBoostCarePkg
-    3300010: TriBurstPkg
+    100000: AlienCarePackage
+    100002: BigBulletCarePkg
+    100004: BulletCarePkg
+    100006: //RootNode
+    100008: ConeShotCarePkg
+    100010: HealthCarePkg
+    100012: SpeedBoostCarePkg
+    100014: TriBurstPkg
+    400000: AlienCarePackage
+    400002: BigBulletCarePkg
+    400004: BulletCarePkg
+    400006: //RootNode
+    400008: ConeShotCarePkg
+    400010: HealthCarePkg
+    400012: SpeedBoostCarePkg
+    400014: TriBurstPkg
+    2300000: AlienCarePackage
+    2300002: BigBulletCarePkg
+    2300004: BulletCarePkg
+    2300006: ConeShotCarePkg
+    2300008: HealthCarePkg
+    2300010: SpeedBoostCarePkg
+    2300012: TriBurstPkg
+    3300000: AlienCarePackage
+    3300002: BigBulletCarePkg
+    3300004: BulletCarePkg
+    3300006: ConeShotCarePkg
+    3300008: HealthCarePkg
+    3300010: SpeedBoostCarePkg
+    3300012: TriBurstPkg
     4300000: BulletCarePkg
     4300002: TriBurstPkg
     4300004: HealthCarePkg
     4300006: SpeedBoostCarePkg
     4300008: ConeShotCarePkg
     4300010: BigBulletCarePkg
+    4300012: AlienCarePackage
   materials:
     importMaterials: 1
     materialName: 0

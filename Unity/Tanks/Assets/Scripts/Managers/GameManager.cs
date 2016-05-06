@@ -7,21 +7,22 @@ using System;
 
 public class GameManager : MonoBehaviour
 {
-    public int m_NumRoundsToWin = 5;        
-    public float m_StartDelay = 3f;         
-    public float m_EndDelay = 3f;           
-    public CameraControl m_CameraControl;   
-    public Text m_MessageText;              
-    public GameObject m_TankPrefab;         
-    public TankManager[] m_Tanks;           
+    public int m_NumRoundsToWin = 5;
+    public float m_StartDelay = 3f;
+    public float m_EndDelay = 3f;
+    public CameraControl m_CameraControl;
+    public Text m_MessageText;
+    public GameObject m_TankPrefab;
+    public TankManager[] m_Tanks;
 
 
-    private int m_RoundNumber;              
-    private WaitForSeconds m_StartWait;     
-    private WaitForSeconds m_EndWait;       
+    private int m_RoundNumber;
+    private WaitForSeconds m_StartWait;
+    private WaitForSeconds m_EndWait;
     private TankManager m_RoundWinner;
     private TankManager m_GameWinner;
 
+    //extension
     public CarePackageManager m_CarePackageManager;
     public Text m_Player1_Info;
     public Text m_Player2_Info;
@@ -108,6 +109,8 @@ public class GameManager : MonoBehaviour
     {
         EnableTankControl();
         m_MessageText.text = string.Empty;
+        m_Player1_SpeedBuff.enabled = true;
+        m_Player2_SpeedBuff.enabled = true;
         while (!OneTankLeft())
         {
             DisplayUI();
@@ -158,11 +161,11 @@ public class GameManager : MonoBehaviour
 
     private string getAmmoDisplay(int Player_i)
     {
-        TankManager player = m_Tanks[Player_i-1];
+        TankManager player = m_Tanks[Player_i - 1];
         TankShooting playerShootComponent = player.m_Instance.GetComponent<TankShooting>();
         StringBuilder Player_Info = new StringBuilder("<color=#" + ColorUtility.ToHtmlStringRGB(player.m_PlayerColor) + ">Ammo: " + playerShootComponent.m_CurrentAmmo + "</color>");
         Player_Info.Append("\n");
-        Player_Info.Append("<color=#" + ColorUtility.ToHtmlStringRGB(player.m_PlayerColor) +">Special: ");
+        Player_Info.Append("<color=#" + ColorUtility.ToHtmlStringRGB(player.m_PlayerColor) + ">Special: ");
         if (playerShootComponent.m_HasThreeBurst)
         {
             Player_Info.Append("Three Burst Shot</color>");
@@ -174,6 +177,10 @@ public class GameManager : MonoBehaviour
         else if (playerShootComponent.m_HasBigBullet)
         {
             Player_Info.Append("Big Bullet</color>");
+        }
+        else if (playerShootComponent.m_HasAlienSignal)
+        {
+            Player_Info.Append("Alien Signal Bullet</color>");
         }
         else
         {
@@ -192,6 +199,10 @@ public class GameManager : MonoBehaviour
         {
             m_RoundWinner.m_Wins++;
         }
+        m_Player1_Info.text = string.Empty;
+        m_Player2_Info.text = string.Empty;
+        m_Player1_SpeedBuff.enabled = false;
+        m_Player2_SpeedBuff.enabled = false;
         m_GameWinner = GetGameWinner();
         string message = EndMessage();
         m_MessageText.text = message;

@@ -49,11 +49,6 @@ public class AlienSwarm : MonoBehaviour
         swarm.GetComponent<AlienSwarm>().m_TargetTank = targetID;
     }
 
-    public static void SpawnSwarm(ref GameObject swarmPrefab, Transform landingTransform, bool hitEnemyTank)
-    {
-        GameObject swarm = Instantiate(swarmPrefab, landingTransform.position, landingTransform.rotation) as GameObject;
-        swarm.GetComponent<AlienSwarm>().m_isAttachedtoTargetTank = hitEnemyTank;
-    }
 
     public GameObject GetEnemyTank(int playerID)
     {

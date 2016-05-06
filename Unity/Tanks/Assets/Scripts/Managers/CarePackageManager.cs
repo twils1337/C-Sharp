@@ -11,9 +11,9 @@ public class CarePackageManager : MonoBehaviour
     private float m_SpawnTimer = 0.0f;
     private bool m_FirstSpawn = true;      //will spawn the max amount of care packages initially, then spawn more as needed
     private float m_TimeToGoOff = 30.0f;
-	
-	// Update is called once per frame
-	void Update ()
+
+    // Update is called once per frame
+    void Update()
     {
         m_SpawnTimer += Time.deltaTime;
         if (m_FirstSpawn)
@@ -65,7 +65,7 @@ public class CarePackageManager : MonoBehaviour
 
     private void SpawnCarePackage()
     {
-        var randomSpawn = Random.Range(0, 10);
+        var randomSpawn = Random.Range(0, m_SpawnPoints.Count);
         var randomCarePackage = Random.Range(0, m_CarePackages.Count);
         Transform spawnTransform = m_SpawnPoints[randomSpawn].transform;
         Rigidbody carePackage = m_CarePackages[randomCarePackage];
@@ -87,6 +87,8 @@ public class CarePackageManager : MonoBehaviour
                 return CarePackage.PackageType.ConeShot;
             case 5:
                 return CarePackage.PackageType.BigBullet;
+            case 6:
+                return CarePackage.PackageType.AlienSignalBullet;
             default:
                 return CarePackage.PackageType.Bullet;
         }
@@ -107,7 +109,7 @@ public class CarePackageManager : MonoBehaviour
 
     List<GameObject> CarePackagesNeedFixing()
     {
-        float threshold = 1.0f; //height where a care package can sit on a helipad
+        float threshold = 1.0f; //height where a care package can sit on a helipad (is the lowest height that a Tank can't reach)
         List<GameObject> objectsToFix = new List<GameObject>();
         GameObject[] allCarePackages = GameObject.FindGameObjectsWithTag("CarePackage");
         if (allCarePackages != null && allCarePackages.Length != 0)

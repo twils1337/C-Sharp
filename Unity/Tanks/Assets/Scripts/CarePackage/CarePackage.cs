@@ -5,14 +5,13 @@ public class CarePackage : MonoBehaviour
 {
     public enum PackageType
     {
-        Bullet, ThreeBurst, Health, Speed, ConeShot, BigBullet
+        Bullet, ThreeBurst, Health, Speed, ConeShot, BigBullet, AlienSignalBullet
     }
     public PackageType m_Type { get; set; }
     private float m_HealthBenefit = 25.0f;
     public bool m_WasSpawned = false;
-    public bool m_IsSleeping = false;
-    
-    public static Rigidbody SpawnCarePackage(ref Rigidbody CarePkgPrefab,Transform transform, PackageType CPtype, bool fromManager)
+
+    public static Rigidbody SpawnCarePackage(ref Rigidbody CarePkgPrefab, Transform transform, PackageType CPtype, bool fromManager)
     {
         Rigidbody newCarePkg = Instantiate(CarePkgPrefab, transform.position, transform.rotation) as Rigidbody;
         newCarePkg.GetComponent<CarePackage>().m_Type = CPtype;
@@ -22,7 +21,6 @@ public class CarePackage : MonoBehaviour
 
     private void Update()
     {
-        m_IsSleeping = GetComponent<Rigidbody>().IsSleeping();
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -66,11 +64,11 @@ public class CarePackage : MonoBehaviour
     void ProcessBulletPackage(ContactPoint contact, PackageType bulletType)
     {
         TankShooting shootingComponent = contact.otherCollider.GetComponent<TankShooting>();
-        if (bulletType != PackageType.Bullet && bulletType != PackageType.BigBullet)
+        if (bulletType != PackageType.Bullet && bulletType != PackageType.BigBullet)    //Tri-Burst Shot, Cone Shot
         {
             ReloadAndUpdateBullets(ref shootingComponent, bulletType, reload: 3);
         }
-        else
+        else //Bullet, BigBullet, Alien Signal
         {
             ReloadAndUpdateBullets(ref shootingComponent, bulletType, reload: 1);
         }
@@ -101,6 +99,9 @@ public class CarePackage : MonoBehaviour
             case PackageType.BigBullet:
                 shootingComponent.m_HasBigBullet = true;
                 break;
+            case PackageType.AlienSignalBullet:
+                shootingComponent.m_HasAlienSignal = true;
+                break;
             default:
                 break;
         }
@@ -113,7 +114,7 @@ public class CarePackage : MonoBehaviour
         {
             case PackageType.Health:
                 float healthMax = 100.0f;
-                if ( (healthComponent.m_CurrentHealth + m_HealthBenefit) > healthMax )
+                if ((healthComponent.m_CurrentHealth + m_HealthBenefit) > healthMax)
                 {
                     healthComponent.m_CurrentHealth = healthMax;
                     healthComponent.SetHealthUI();
