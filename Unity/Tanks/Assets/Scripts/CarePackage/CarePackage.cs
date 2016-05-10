@@ -5,7 +5,7 @@ public class CarePackage : MonoBehaviour
 {
     public enum PackageType
     {
-        Bullet, ThreeBurst, Health, Speed, ConeShot, BigBullet, AlienSignalBullet
+        Bullet, ThreeBurst, Health, Speed, ConeShot, BigBullet, AlienSwarmBullet
     }
     public PackageType m_Type { get; set; }
     private float m_HealthBenefit = 25.0f;
@@ -17,10 +17,6 @@ public class CarePackage : MonoBehaviour
         newCarePkg.GetComponent<CarePackage>().m_Type = CPtype;
         newCarePkg.GetComponent<CarePackage>().m_WasSpawned = fromManager;
         return newCarePkg;
-    }
-
-    private void Update()
-    {
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -55,7 +51,7 @@ public class CarePackage : MonoBehaviour
             GameObject carePackageManager = GameObject.Find("Care Package Spawn Points");
             if (carePackageManager)
             {
-                --carePackageManager.GetComponent<CarePackageManager>().m_ActiveCarePackages;
+                carePackageManager.GetComponent<CarePackageManager>().DecreaseActiveCarePackages();
             }
         }
         Destroy(gameObject);
@@ -68,7 +64,7 @@ public class CarePackage : MonoBehaviour
         {
             ReloadAndUpdateBullets(ref shootingComponent, bulletType, reload: 3);
         }
-        else //Bullet, BigBullet, Alien Signal
+        else //Bullet, BigBullet, Alien Swarm Signal
         {
             ReloadAndUpdateBullets(ref shootingComponent, bulletType, reload: 1);
         }
@@ -99,8 +95,8 @@ public class CarePackage : MonoBehaviour
             case PackageType.BigBullet:
                 shootingComponent.m_HasBigBullet = true;
                 break;
-            case PackageType.AlienSignalBullet:
-                shootingComponent.m_HasAlienSignal = true;
+            case PackageType.AlienSwarmBullet:
+                shootingComponent.m_HasAlienSwarmBullet = true;
                 break;
             default:
                 break;
@@ -113,17 +109,7 @@ public class CarePackage : MonoBehaviour
         switch (buffType)
         {
             case PackageType.Health:
-                float healthMax = 100.0f;
-                if ((healthComponent.m_CurrentHealth + m_HealthBenefit) > healthMax)
-                {
-                    healthComponent.m_CurrentHealth = healthMax;
-                    healthComponent.SetHealthUI();
-                }
-                else
-                {
-                    healthComponent.m_CurrentHealth += m_HealthBenefit;
-                    healthComponent.SetHealthUI();
-                }
+                healthComponent.Heal(m_HealthBenefit);
                 break;
             case PackageType.Speed:
                 movementComponent.m_HasSpeedBuff = true;

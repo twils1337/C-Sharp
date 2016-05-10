@@ -9,7 +9,7 @@ public class CarePackageManager : MonoBehaviour
     public List<GameObject> m_SpawnPoints;
     private int m_MaxCarePackagesActive = 7;
     private float m_SpawnTimer = 0.0f;
-    private bool m_FirstSpawn = true;      //will spawn the max amount of care packages initially, then spawn more as needed
+    private bool m_FirstSpawn = true;
     private float m_TimeToGoOff = 30.0f;
 
     // Update is called once per frame
@@ -21,19 +21,18 @@ public class CarePackageManager : MonoBehaviour
             m_FirstSpawn = false;
             for (int i = 0; i < m_MaxCarePackagesActive; ++i)
             {
-                SpawnCarePackage();
+                SpawnRandomCarePackage();
             }
             m_ActiveCarePackages = m_MaxCarePackagesActive;
         }
         else if (m_ActiveCarePackages < m_MaxCarePackagesActive &&
                 m_SpawnTimer >= m_TimeToGoOff)
         {
-            SpawnCarePackage();
-            ++m_ActiveCarePackages;
+            SpawnRandomCarePackage();
             m_SpawnTimer = 0.0f;
         }
         List<GameObject> needsFixing = CarePackagesNeedFixing();
-        if (needsFixing.Count >= 1)
+        if (needsFixing != null && needsFixing.Count > 0)
         {
             for (int i = 0; i < needsFixing.Count; ++i)
             {
@@ -63,14 +62,15 @@ public class CarePackageManager : MonoBehaviour
         return relocationSpawn;
     }
 
-    private void SpawnCarePackage()
+    private void SpawnRandomCarePackage()
     {
         var randomSpawn = Random.Range(0, m_SpawnPoints.Count);
         var randomCarePackage = Random.Range(0, m_CarePackages.Count);
         Transform spawnTransform = m_SpawnPoints[randomSpawn].transform;
         Rigidbody carePackage = m_CarePackages[randomCarePackage];
         CarePackage.PackageType CPType = GetCarePackageTypeByID(randomCarePackage);
-        CarePackage.SpawnCarePackage(ref carePackage, spawnTransform, CPType, true);
+        CarePackage.SpawnCarePackage(ref carePackage, spawnTransform, CPType, fromManager: true);
+        ++m_ActiveCarePackages;
     }
 
     private CarePackage.PackageType GetCarePackageTypeByID(int carePackageID)
@@ -88,7 +88,7 @@ public class CarePackageManager : MonoBehaviour
             case 5:
                 return CarePackage.PackageType.BigBullet;
             case 6:
-                return CarePackage.PackageType.AlienSignalBullet;
+                return CarePackage.PackageType.AlienSwarmBullet;
             default:
                 return CarePackage.PackageType.Bullet;
         }
@@ -109,11 +109,12 @@ public class CarePackageManager : MonoBehaviour
 
     List<GameObject> CarePackagesNeedFixing()
     {
-        float threshold = 1.0f; //height where a care package can sit on a helipad (is the lowest height that a Tank can't reach)
-        List<GameObject> objectsToFix = new List<GameObject>();
+        float threshold = 1.0f; //height of a care package sitting on a heli-pad (it's the lowest height that a Tank can't reach)
+        List<GameObject> objectsToFix = null;
         GameObject[] allCarePackages = GameObject.FindGameObjectsWithTag("CarePackage");
         if (allCarePackages != null && allCarePackages.Length != 0)
         {
+            objectsToFix = new List<GameObject>();
             for (int i = 0; i < allCarePackages.Length; i++)
             {
                 if (allCarePackages[i].transform.position.y >= threshold)
@@ -126,5 +127,10 @@ public class CarePackageManager : MonoBehaviour
             }
         }
         return objectsToFix;
+    }
+
+    public void DecreaseActiveCarePackages()
+    {
+        --m_ActiveCarePackages;
     }
 }

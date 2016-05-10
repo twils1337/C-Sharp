@@ -46,8 +46,7 @@ public class GameManager : MonoBehaviour
     {
         for (int i = 0; i < m_Tanks.Length; i++)
         {
-            m_Tanks[i].m_Instance =
-                Instantiate(m_TankPrefab, m_Tanks[i].m_SpawnPoint.position, m_Tanks[i].m_SpawnPoint.rotation) as GameObject;
+            m_Tanks[i].m_Instance = Instantiate(m_TankPrefab, m_Tanks[i].m_SpawnPoint.position, m_Tanks[i].m_SpawnPoint.rotation) as GameObject;
             m_Tanks[i].m_PlayerNumber = i + 1;
             m_Tanks[i].Setup();
         }
@@ -88,7 +87,8 @@ public class GameManager : MonoBehaviour
     {
         ResetAllTanks();
         m_CarePackageManager.Reset();
-        DestroyAllSwarms();
+        DestroyAllAlienSwarms();
+        RemoveAllSlowBuffs();
         DisableTankControl();
         m_CameraControl.SetStartPositionAndSize();
         m_RoundNumber++;
@@ -96,7 +96,7 @@ public class GameManager : MonoBehaviour
         yield return m_StartWait;
     }
 
-    private void DestroyAllSwarms()
+    private void DestroyAllAlienSwarms()
     {
         GameObject[] swarms = GameObject.FindGameObjectsWithTag("Aliens");
         for (int i = 0; i < swarms.Length; i++)
@@ -129,7 +129,7 @@ public class GameManager : MonoBehaviour
     {
         Color player1Color = m_Player1_SpeedBuff.color;
         Color player2Color = m_Player2_SpeedBuff.color;
-        if (m_Tanks[0].m_Instance.GetComponent<TankMovement>().m_HasSpeedBuff)
+        if (m_Tanks[0].m_Instance.GetComponent<TankMovement>().m_HasSpeedBuff) //dispaly player 1's lightning icon
         {
             player1Color[3] = 255f;
             m_Player1_SpeedBuff.color = player1Color;
@@ -139,7 +139,7 @@ public class GameManager : MonoBehaviour
             player1Color[3] = 0f;
             m_Player1_SpeedBuff.color = player1Color;
         }
-        if (m_Tanks[1].m_Instance.GetComponent<TankMovement>().m_HasSpeedBuff)
+        if (m_Tanks[1].m_Instance.GetComponent<TankMovement>().m_HasSpeedBuff) //display player 2's lightning icon
         {
             player2Color[3] = 255f;
             m_Player2_SpeedBuff.color = player2Color;
@@ -178,9 +178,9 @@ public class GameManager : MonoBehaviour
         {
             Player_Info.Append("Big Bullet</color>");
         }
-        else if (playerShootComponent.m_HasAlienSignal)
+        else if (playerShootComponent.m_HasAlienSwarmBullet)
         {
-            Player_Info.Append("Alien Signal Bullet</color>");
+            Player_Info.Append("Alien Swarm Bullet</color>");
         }
         else
         {
@@ -219,7 +219,6 @@ public class GameManager : MonoBehaviour
             if (m_Tanks[i].m_Instance.activeSelf)
                 numTanksLeft++;
         }
-
         return numTanksLeft <= 1;
     }
 
@@ -292,6 +291,14 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < m_Tanks.Length; i++)
         {
             m_Tanks[i].DisableControl();
+        }
+    }
+
+    private void RemoveAllSlowBuffs()
+    {
+        for (int i = 0; i < m_Tanks.Length; ++i)
+        {
+            m_Tanks[i].m_Instance.GetComponent<TankMovement>().m_AliensSlowingSpeed = false;
         }
     }
 }

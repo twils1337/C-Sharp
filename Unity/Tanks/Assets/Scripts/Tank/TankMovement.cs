@@ -18,9 +18,9 @@ public class TankMovement : MonoBehaviour
     private float m_TurnInputValue;        
     private float m_OriginalPitch;
 
-    //extension
+    //Extension
     public bool m_HasSpeedBuff = false;
-    private float m_BoostFactor = 2.5f;
+    private float m_BoostFactor = 2.0f;
     public float m_Timer = 0.0f;
     private float m_BuffPeriod = 1.5f;
     private string m_TurboButton;
@@ -122,7 +122,8 @@ public class TankMovement : MonoBehaviour
         }
         if (m_ActiveTurbo && m_Timer <= m_BuffPeriod)    //speed boost active
         {
-            movement = transform.forward * m_MovementInputValue * m_Speed * Time.deltaTime * m_BoostFactor;
+            movement = m_AliensSlowingSpeed? transform.forward * m_MovementInputValue * m_Speed * Time.deltaTime * 1.0f:
+                                             transform.forward * m_MovementInputValue * m_Speed * Time.deltaTime * m_BoostFactor;
         }
         else if (m_AliensSlowingSpeed)
         {

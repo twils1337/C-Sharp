@@ -11,12 +11,12 @@ public class ShellExplosion : MonoBehaviour
     public float m_MaxLifeTime = 2f;              
     public float m_ExplosionRadius = 5f;
 
-    //extension
-    public bool m_IsBigBullet= false;
+    //Extension
+    public bool m_IsBigBullet = false;
     public Rigidbody m_BulletCarePackage;
     public int m_ShootingPlayer = 1;
-    public bool m_IsAlienSignal = false;
-    public bool m_DidSignalHitTank;
+    public bool m_IsAlienSwarmShot = false;
+    public bool m_DidAlienShotHitTank;
     public GameObject m_SwarmPrefab;
 
 
@@ -36,7 +36,7 @@ public class ShellExplosion : MonoBehaviour
         // Find all the tanks in an area around the shell and damage them.
         Collider[] colliders = Physics.OverlapSphere(transform.position, m_ExplosionRadius);
         bool canPickUp = true;
-        if (m_IsBigBullet || m_IsAlienSignal)
+        if (m_IsBigBullet || m_IsAlienSwarmShot)
         {
             canPickUp = false;
         }
@@ -59,10 +59,10 @@ public class ShellExplosion : MonoBehaviour
             }
             if (m_ShootingPlayer != colliders[i].GetComponent<TankMovement>().m_PlayerNumber)
             {
-                if (m_IsAlienSignal)
+                if (m_IsAlienSwarmShot)
                 {
-                    AlienSwarm.SpawnSwarm(ref m_SwarmPrefab, colliders[i].transform, colliders[i].GetComponent<TankMovement>().m_PlayerNumber, true);
-                    m_IsAlienSignal = false;
+                    AlienSwarm.SpawnAlienSwarm(ref m_SwarmPrefab, colliders[i].transform, colliders[i].GetComponent<TankMovement>().m_PlayerNumber, hitEnemyTank: true);
+                    m_IsAlienSwarmShot = false;
                 }
                 else
                 {
@@ -72,11 +72,11 @@ public class ShellExplosion : MonoBehaviour
                 }
             }
         }
-        ProcessExplosionParticlesAndDestroy(playExplosion: !m_IsAlienSignal);
-        if (m_IsAlienSignal)
+        ProcessExplosionParticlesAndDestroy(playExplosion: !m_IsAlienSwarmShot);
+        if (m_IsAlienSwarmShot)
         {
             int targetID = m_ShootingPlayer == 1 ? 2 : 1;
-            AlienSwarm.SpawnSwarm(ref m_SwarmPrefab, gameObject.transform, targetID, false);
+            AlienSwarm.SpawnAlienSwarm(ref m_SwarmPrefab, gameObject.transform, targetID, hitEnemyTank: false);
         }
         if (canPickUp)
         {
@@ -112,6 +112,6 @@ public class ShellExplosion : MonoBehaviour
     {
         Transform CarePackageTransform = gameObject.transform;
         CarePackageTransform.transform.Translate(0, 1f, 0);
-        CarePackage.SpawnCarePackage(ref m_BulletCarePackage, CarePackageTransform, CarePackage.PackageType.Bullet, false);
+        CarePackage.SpawnCarePackage(ref m_BulletCarePackage, CarePackageTransform, CarePackage.PackageType.Bullet, fromManager: false);
     }
 }

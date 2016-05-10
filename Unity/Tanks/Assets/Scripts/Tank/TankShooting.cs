@@ -22,15 +22,14 @@ public class TankShooting : MonoBehaviour
     private float m_ChargeSpeed;         
     private bool m_Fired;
 
-    //extension
+    //Extension
     public int m_AmmoCapacity = 5;
     public int m_CurrentAmmo;
     public bool m_HasThreeBurst = false;
     public bool m_HasConeShot = false;
     public bool m_HasBigBullet = false;
-    public bool m_HasAlienSignal = false;
-    public Rigidbody m_BigShell;  
-
+    public bool m_HasAlienSwarmBullet = false;
+    public Rigidbody m_BigShell;
 
     private void OnEnable()
     {
@@ -59,24 +58,7 @@ public class TankShooting : MonoBehaviour
             {
                 //max charged, not yet fired
                 m_CurrentLaunchForce = m_MaxLaunchForce;
-                if (m_HasThreeBurst)
-                {
-                    StartCoroutine(FireThree());
-                    m_HasThreeBurst = false;
-                }
-                else if (m_HasConeShot)
-                {
-                    StartCoroutine(ConeShot());
-                    m_HasConeShot = false;
-                }
-                else
-                {
-                    Fire();
-                    if (m_HasBigBullet)
-                    {
-                        m_HasBigBullet = false;
-                    }
-                }
+                FireAndUpdate();
             }
             else if (Input.GetButtonDown(m_FireButton))
             {
@@ -95,29 +77,34 @@ public class TankShooting : MonoBehaviour
             else if (Input.GetButtonUp(m_FireButton) && !m_Fired)
             {
                 //released fire button, shell will be fired
-                if (m_HasThreeBurst)
-                {
-                    StartCoroutine(FireThree());
-                    m_HasThreeBurst = false;
-                }
-                else if (m_HasConeShot)
-                {
-                    StartCoroutine(ConeShot());
-                    m_HasConeShot = false;
-                }
-                else if (m_HasAlienSignal)
-                {
-                    Fire();
-                    m_HasAlienSignal = false;
-                }
-                else
-                {
-                    Fire();
-                    if (m_HasBigBullet)
-                    {
-                        m_HasBigBullet = false;
-                    }
-                }
+                FireAndUpdate();
+            }
+        }
+    }
+
+    private void FireAndUpdate()
+    {
+        if (m_HasThreeBurst)
+        {
+            StartCoroutine(FireThree());
+            m_HasThreeBurst = false;
+        }
+        else if (m_HasConeShot)
+        {
+            StartCoroutine(ConeShot());
+            m_HasConeShot = false;
+        }
+        else if (m_HasAlienSwarmBullet)
+        {
+            Fire();
+            m_HasAlienSwarmBullet = false;
+        }
+        else
+        {
+            Fire();
+            if (m_HasBigBullet)
+            {
+                m_HasBigBullet = false;
             }
         }
     }
@@ -155,7 +142,6 @@ public class TankShooting : MonoBehaviour
         {
             m_CurrentLaunchForce = m_MinLaunchForce;
         }
-        
     }
 
     IEnumerator ConeShot()
@@ -182,15 +168,15 @@ public class TankShooting : MonoBehaviour
     {
         FireTransformRotateYandTranslateX(rotationY, positionX);
         Rigidbody shellInstance = m_HasBigBullet ? Instantiate(m_BigShell, m_FireTransform.position, m_FireTransform.rotation) as Rigidbody :
-                                                      Instantiate(m_Shell, m_FireTransform.position, m_FireTransform.rotation) as Rigidbody;
+                                                   Instantiate(m_Shell, m_FireTransform.position, m_FireTransform.rotation) as Rigidbody;
         ShellExplosion explosion = shellInstance.GetComponent<ShellExplosion>();
         explosion.m_IsBigBullet = m_HasBigBullet;
         shellInstance.velocity = m_CurrentLaunchForce * m_FireTransform.forward;
         explosion.m_ShootingPlayer = m_PlayerNumber;
-        if (m_HasAlienSignal)
+        if (m_HasAlienSwarmBullet)
         {
-            explosion.m_IsAlienSignal = true;
-            m_HasAlienSignal = false;
+            explosion.m_IsAlienSwarmShot = true;
+            m_HasAlienSwarmBullet = false;
         }
         m_ShootingAudio.clip = m_FireClip;
         m_ShootingAudio.Play();
@@ -204,8 +190,9 @@ public class TankShooting : MonoBehaviour
 
     private void AutoCorrectFireTransform()
     {
-      m_FireTransform.localPosition = new Vector3(0f, 1.7f, 1.35f); //x,y,z in this new Vector3 are the original values of the fire transform set on initialization
-      m_FireTransform.localEulerAngles = new Vector3(0f, 0f, 0f); 
+        //x,y,z in this new Vector3 are the original values of the fire transform set on initialization
+        m_FireTransform.localPosition = new Vector3(0f, 1.7f, 1.35f); 
+        m_FireTransform.localEulerAngles = new Vector3(0f, 0f, 0f); 
     }
 
     public void RemoveAllBulletBuffs()
@@ -213,6 +200,7 @@ public class TankShooting : MonoBehaviour
         m_HasThreeBurst = false;
         m_HasBigBullet = false;
         m_HasConeShot = false;
+        m_HasAlienSwarmBullet = false;
     }
 
 }

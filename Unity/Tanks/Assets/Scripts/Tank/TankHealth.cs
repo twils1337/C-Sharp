@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class TankHealth : MonoBehaviour
@@ -62,5 +63,17 @@ public class TankHealth : MonoBehaviour
         m_ExplosionParticles.Play();
         m_ExplosionAudio.Play();
         gameObject.SetActive(false);
+    }
+
+    public void Heal(float healAmount)
+    {
+        if (m_CurrentHealth + healAmount > m_StartingHealth)
+        {
+            m_CurrentHealth = m_StartingHealth;
+        }
+        else
+        {
+            m_CurrentHealth += healAmount;
+        }
     }
 }

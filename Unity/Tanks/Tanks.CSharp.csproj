@@ -80,7 +80,7 @@
     <Compile Include="Assets\Scripts\Tank\TankShooting.cs" />
     <Compile Include="Assets\Scripts\UFO\AlienSwarm.cs" />
     <Compile Include="Assets\Scripts\UFO\LightningBolt.cs" />
-    <Compile Include="Assets\Scripts\UFO\Rotate_Disc.cs" />
+    <Compile Include="Assets\Scripts\UFO\SpinSwarm.cs" />
     <Compile Include="Assets\Scripts\UI\UIDirectionControl.cs" />
   </ItemGroup>
   <ItemGroup>
